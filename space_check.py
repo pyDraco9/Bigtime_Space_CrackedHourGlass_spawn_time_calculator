@@ -37,20 +37,26 @@ headers = {
 
 spawn_times = {
     ("rare", "small"): 72,
-    ("epic", "small"): 72,
+    
     ("rare", "medium"): 66,
-    ("epic", "medium"): 66,
+    ("epic", "small"): 66,
+
     ("rare", "large"): 60,
-    ("epic", "large"): 60,
+    ("epic", "medium"): 60,
     ("legendary", "small"): 60,
-    ("legendary", "medium"): 60,
+
+    ("epic", "large"): 54,
+    ("legendary", "medium"): 54,
     ("mythic", "small"): 54,
-    ("mythic", "medium"): 54,
-    ("legendary", "large"): 54,
-    ("mythic", "large"): 54,
+
+    ("legendary", "large"): 48,
+    ("mythic", "medium"): 48,
     ("exalted", "small"): 48,
-    ("exalted", "medium"): 48,
-    ("exalted", "large"): 48,
+
+    ("mythic", "large"): 42,
+    ("exalted", "medium"): 42,
+    
+    ("exalted", "large"): 36,
 }
 
 
