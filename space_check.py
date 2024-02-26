@@ -5,6 +5,7 @@ from rich.console import Console
 from rich.theme import Theme
 import os
 from dotenv import load_dotenv
+from prettytable import PrettyTable
 
 custom_theme = Theme({"info": "dim cyan", "warning": "magenta", "danger": "bold red"})
 console = Console(theme=custom_theme)
@@ -19,7 +20,7 @@ headers = {
     "accept": "*/*",
     "accept-language": "zh-CN,zh;q=0.9",
     "content-type": "application/json",
-    "cookie": os.getenv('COOKIE'),
+    "cookie": os.getenv("COOKIE"),
     "origin": "https://openloot.com",
     "sec-ch-ua": '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
     "sec-ch-ua-mobile": "?0",
@@ -29,33 +30,27 @@ headers = {
     "sec-fetch-site": "same-site",
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
     "X-Client-Id:": "marketplace",
-    "X-Device-Id": os.getenv('X-DEVICE-ID'),
+    "X-Device-Id": os.getenv("X-DEVICE-ID"),
     "X-Is-Mobile": "false",
-    "X-Session-Id": os.getenv('X-SESSION-ID'),
+    "X-Session-Id": os.getenv("X-SESSION-ID"),
     "X-User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
 }
 
 spawn_times = {
     ("rare", "small"): 72,
-
     ("rare", "medium"): 66,
     ("epic", "small"): 66,
-
     ("rare", "large"): 60,
     ("epic", "medium"): 60,
     ("legendary", "small"): 60,
-
     ("epic", "large"): 54,
     ("legendary", "medium"): 54,
     ("mythic", "small"): 54,
-
     ("legendary", "large"): 48,
     ("mythic", "medium"): 48,
     ("exalted", "small"): 48,
-
     ("mythic", "large"): 42,
     ("exalted", "medium"): 42,
-
     ("exalted", "large"): 36,
 }
 
@@ -99,7 +94,6 @@ if __name__ == "__main__":
                     continue
                 for att in item["extra"]["attributes"]:
                     if att["name"] == "LastCrackedHourGlassDropTime":
-                        name = item["metadata"]["name"]
                         timestamp = att["value"]
                         spawn_time = 72
                         item_tags = set(item["metadata"]["tags"])
@@ -119,20 +113,28 @@ if __name__ == "__main__":
             break
 
     result.sort(key=lambda x: x["remaining_time"], reverse=True)
+    table = PrettyTable()
+    table.field_names = ["编号", "名称", "倒计时", "时间"]
+
     for item in result:
         time_diff = item["remaining_time"]
         id = item["issuedId"]
+        name = item["metadata"]["name"]
         if time_diff <= timedelta(0):
-            print(f"{GREEN}■{ENDC} id: #{id:06d}")
+            table.add_row([f"{GREEN}#{id:06d}{ENDC}", name, "", ""])
             true_count += 1
         else:
-            print(
-                f"{RED}■{ENDC} #{id:06d} [{time_diff}]，下次刷新時間: {(datetime.now()+time_diff).strftime('%Y-%m-%d %H:%M:%S')}"
+            table.add_row(
+                [
+                    f"{RED}#{id:06d}{ENDC}",
+                    name,
+                    time_diff,
+                    (datetime.now() + time_diff).strftime("%Y-%m-%d %H:%M:%S"),
+                ]
             )
             false_count += 1
-
-    print(f"\n{GREEN}■ {true_count}{ENDC}")
-    print(f"{RED}■ {false_count}{ENDC}")
+    print(table)
+    print(f"\n{GREEN}■ {true_count}{ENDC} {RED}■ {false_count}{ENDC}")
     print(f"最大刷新时间: {result[0]['remaining_time']}")
     print(f"最小刷新时间: {result[-1]['remaining_time']}")
     input()
