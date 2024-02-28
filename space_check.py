@@ -67,7 +67,7 @@ def calculate_time_difference(timestamp_str, spawn_time):
 
 def get_openloot_in_game_items(page=1, proxy=None, timeout=3):
     proxies = proxy if proxy else None
-    url = f"https://api.openloot.com/v2/market/items/in-game?page={page}&pageSize=1000"
+    url = f"https://api.openloot.com/v2/market/items/in-game?page={page}&pageSize=1000&sort=name%3Aasc&gameId=56a149cf-f146-487a-8a1c-58dc9ff3a15c&nftTags=NFT.SPACE"
     r = requests.get(
         url,
         proxies=proxies,
