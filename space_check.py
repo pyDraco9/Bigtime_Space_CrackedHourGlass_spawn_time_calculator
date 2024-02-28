@@ -87,6 +87,10 @@ if __name__ == "__main__":
     while True:
         try:
             data = get_openloot_in_game_items(page)
+            if "error" in data:
+                print("错误: " + data["error"])
+                input("按任意键继续")
+                exit
             items = data["items"]
             for item in items:
                 key = item["issuedId"]
@@ -137,4 +141,4 @@ if __name__ == "__main__":
     print(f"\n{GREEN}■ {true_count}{ENDC} {RED}■ {false_count}{ENDC}")
     print(f"最大刷新时间: {result[0]['remaining_time']}")
     print(f"最小刷新时间: {result[-1]['remaining_time']}")
-    input()
+    input("按任意键继续")
