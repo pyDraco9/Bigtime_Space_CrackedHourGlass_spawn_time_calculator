@@ -107,8 +107,15 @@ if __name__ == "__main__":
                                 spawn_time = time
                                 break
                         time_diff = calculate_time_difference(timestamp, spawn_time)
-                        item["remaining_time"] = time_diff
-                        result.append(item)
+                        item["hourglass_remaining_time"] = time_diff
+                    elif att["name"] == "LastEpochDropTime":
+                        timestamp = att["value"]
+                        spawn_time = 48 # 尚不清楚具体掉落时间
+                        time_diff = calculate_time_difference(timestamp, spawn_time)
+                        item["epoch_remaining_time"] = time_diff
+                result.append(item)
+                
+
 
         except Exception as e:
             console.log(f"处理页面 {page} 时出现错误: {traceback.format_exc()}")
@@ -116,31 +123,55 @@ if __name__ == "__main__":
         page += 1
         if page > data["totalPages"]:
             break
-
-    result.sort(key=lambda x: x["remaining_time"], reverse=True)
-    table = PrettyTable()
-    table.field_names = ["编号", "名称", "倒计时", "时间"]
+    
+    result.sort(key=lambda x: x["hourglass_remaining_time"], reverse=True)
+    table_hourglass = PrettyTable()
+    table_hourglass.field_names = ["编号", "名称", "沙漏倒计时", "沙漏时间"]
+    table_epoch = PrettyTable()
+    table_epoch.field_names = ["编号", "名称", "纪元倒计时", "纪元时间"]
 
     for item in result:
-        time_diff = item["remaining_time"]
+        hourglass_time_diff = item["hourglass_remaining_time"]
         id = item["issuedId"]
         name = item["metadata"]["name"]
-        if time_diff <= timedelta(0):
-            table.add_row([f"{GREEN}#{id:06d}{ENDC}", name, "", ""])
-            true_count += 1
+        table_hourglass.add_row([
+            f"{id:06d}",
+            name,
+            "" if hourglass_time_diff <= timedelta(0) else hourglass_time_diff,
+            "" if hourglass_time_diff <= timedelta(0) else (datetime.now() + hourglass_time_diff).strftime("%Y-%m-%d %H:%M:%S"),
+            ])
+        if hourglass_time_diff <= timedelta(0):
+            true_count+=1 
         else:
-            table.add_row(
-                [
-                    f"{RED}#{id:06d}{ENDC}",
-                    name,
-                    time_diff,
-                    (datetime.now() + time_diff).strftime("%Y-%m-%d %H:%M:%S"),
-                ]
-            )
-            false_count += 1
-    print(table)
+            false_count+=1
+    
+    print(table_hourglass)
     print(f"\n{GREEN}■ {true_count}{ENDC} {RED}■ {false_count}{ENDC}")
-    print(f"最大刷新时间: {result[0]['remaining_time']}")
-    print(f"最小刷新时间: {result[-1]['remaining_time']}")
+    print(f"最大刷新时间: {result[0]['hourglass_remaining_time']}")
+    print(f"最小刷新时间: {result[-1]['hourglass_remaining_time']}")
+    
+    true_count = 0
+    false_count = 0
+    result.sort(key=lambda x: x["epoch_remaining_time"], reverse=True)
+    for item in result:
+        epoch_time_diff = item["epoch_remaining_time"]
+        id = item["issuedId"]
+        name = item["metadata"]["name"]
+        table_epoch.add_row([
+            f"{id:06d}",
+            name,
+            "" if epoch_time_diff <= timedelta(0) else epoch_time_diff,
+            "" if epoch_time_diff <= timedelta(0) else (datetime.now() + epoch_time_diff).strftime("%Y-%m-%d %H:%M:%S"),
+            ])
+        
+        if epoch_time_diff <= timedelta(0):
+            true_count+=1 
+        else:
+            false_count+=1
+
+    print(table_epoch)
+    print(f"\n{GREEN}■ {true_count}{ENDC} {RED}■ {false_count}{ENDC}")
+    print(f"最大刷新时间: {result[0]['epoch_remaining_time']}")
+    print(f"最小刷新时间: {result[-1]['epoch_remaining_time']}\n")
     print("按回车键退出")
     input()
