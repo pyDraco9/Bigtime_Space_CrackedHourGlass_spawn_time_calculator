@@ -64,7 +64,6 @@ def calculate_time_difference(timestamp_str, spawn_time):
 
     return remaining_time if remaining_time > timedelta(0) else timedelta(0)
 
-
 def get_openloot_in_game_items(page=1, proxy=None, timeout=3):
     proxies = proxy if proxy else None
     url = f"https://api.openloot.com/v2/market/items/in-game?page={page}&pageSize=1000&sort=name%3Aasc&gameId=56a149cf-f146-487a-8a1c-58dc9ff3a15c&nftTags=NFT.SPACE"
@@ -113,6 +112,7 @@ if __name__ == "__main__":
                         spawn_time = 48 # 尚不清楚具体掉落时间
                         time_diff = calculate_time_difference(timestamp, spawn_time)
                         item["epoch_remaining_time"] = time_diff
+                item["next_drop_remaining_time"] = min(item["hourglass_remaining_time"], item["epoch_remaining_time"])
                 result.append(item)
                 
 
@@ -124,54 +124,35 @@ if __name__ == "__main__":
         if page > data["totalPages"]:
             break
     
-    result.sort(key=lambda x: x["hourglass_remaining_time"], reverse=True)
-    table_hourglass = PrettyTable()
-    table_hourglass.field_names = ["编号", "名称", "沙漏倒计时", "沙漏时间"]
-    table_epoch = PrettyTable()
-    table_epoch.field_names = ["编号", "名称", "纪元倒计时", "纪元时间"]
+    result.sort(key=lambda x: x["next_drop_remaining_time"], reverse=True)
+    table = PrettyTable()
+    table.field_names = ["编号", "名称", "倒计时", "破碎沙漏", "纪元"]
 
     for item in result:
         hourglass_time_diff = item["hourglass_remaining_time"]
-        id = item["issuedId"]
-        name = item["metadata"]["name"]
-        table_hourglass.add_row([
-            f"{id:06d}",
-            name,
-            "" if hourglass_time_diff <= timedelta(0) else hourglass_time_diff,
-            "" if hourglass_time_diff <= timedelta(0) else (datetime.now() + hourglass_time_diff).strftime("%Y-%m-%d %H:%M:%S"),
-            ])
-        if hourglass_time_diff <= timedelta(0):
-            true_count+=1 
-        else:
-            false_count+=1
-    
-    print(table_hourglass)
-    print(f"{GREEN}■ {true_count}{ENDC} {RED}■ {false_count}{ENDC}")
-    print(f"最大刷新时间: {result[0]['hourglass_remaining_time']}")
-    print(f"最小刷新时间: {result[-1]['hourglass_remaining_time']}\n")
-    
-    true_count = 0
-    false_count = 0
-    result.sort(key=lambda x: x["epoch_remaining_time"], reverse=True)
-    for item in result:
         epoch_time_diff = item["epoch_remaining_time"]
+        next_time_diff =  min(hourglass_time_diff, epoch_time_diff) 
+        next_time_diff -= timedelta(microseconds=next_time_diff.microseconds)
+        hourglass_time_diff if hourglass_time_diff < epoch_time_diff else epoch_time_diff
         id = item["issuedId"]
         name = item["metadata"]["name"]
-        table_epoch.add_row([
-            f"{id:06d}",
+        rich_id = f"{GREEN}{id:06d}{ENDC}" if next_time_diff <= timedelta(0) else f"{RED}{id:06d}{ENDC}"
+        table.add_row([
+            rich_id,
             name,
-            "" if epoch_time_diff <= timedelta(0) else epoch_time_diff,
-            "" if epoch_time_diff <= timedelta(0) else (datetime.now() + epoch_time_diff).strftime("%Y-%m-%d %H:%M:%S"),
+            "" if next_time_diff <= timedelta(0) else next_time_diff,
+            "" if hourglass_time_diff <= timedelta(0) else (datetime.now() + hourglass_time_diff).strftime("%m-%d %H:%M:%S"),
+            "" if epoch_time_diff <= timedelta(0) else (datetime.now() + epoch_time_diff).strftime("%m-%d %H:%M:%S"),
             ])
-        
-        if epoch_time_diff <= timedelta(0):
+        if next_time_diff <= timedelta(0):
             true_count+=1 
         else:
             false_count+=1
-
-    print(table_epoch)
+    
+    print(table)
     print(f"{GREEN}■ {true_count}{ENDC} {RED}■ {false_count}{ENDC}")
-    print(f"最大刷新时间: {result[0]['epoch_remaining_time']}")
-    print(f"最小刷新时间: {result[-1]['epoch_remaining_time']}\n")
+    print(f"最大刷新时间: {result[0]['next_drop_remaining_time']}")
+    print(f"最小刷新时间: {result[-1]['next_drop_remaining_time']}\n")
+    
     print("按回车键退出")
     input()
