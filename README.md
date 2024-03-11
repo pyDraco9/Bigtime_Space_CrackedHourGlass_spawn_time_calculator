@@ -10,7 +10,7 @@ BIGTIME空间破碎沙漏生成时间计算器
 
 如果不会可以谷歌搜索 "chrome如何获取cookie", 其他两个参数也在同一个页面可以找到.
 
-将这些值写入.env文件后运行 `space_check.py ` 或 [下载编译好的exe](https://github.com/pyDraco9/Bigtime_Space_CrackedHourGlass_spawn_time_calculator/releases/)
+将这些值写入.env文件后运行 `space_check.py` 或 [下载编译好的exe](https://github.com/pyDraco9/Bigtime_Space_CrackedHourGlass_spawn_time_calculator/releases/)
 
 效果图:
 
