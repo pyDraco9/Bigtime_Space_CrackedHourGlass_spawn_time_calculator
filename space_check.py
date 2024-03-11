@@ -146,9 +146,9 @@ if __name__ == "__main__":
             false_count+=1
     
     print(table_hourglass)
-    print(f"\n{GREEN}■ {true_count}{ENDC} {RED}■ {false_count}{ENDC}")
+    print(f"{GREEN}■ {true_count}{ENDC} {RED}■ {false_count}{ENDC}")
     print(f"最大刷新时间: {result[0]['hourglass_remaining_time']}")
-    print(f"最小刷新时间: {result[-1]['hourglass_remaining_time']}")
+    print(f"最小刷新时间: {result[-1]['hourglass_remaining_time']}\n")
     
     true_count = 0
     false_count = 0
@@ -170,7 +170,7 @@ if __name__ == "__main__":
             false_count+=1
 
     print(table_epoch)
-    print(f"\n{GREEN}■ {true_count}{ENDC} {RED}■ {false_count}{ENDC}")
+    print(f"{GREEN}■ {true_count}{ENDC} {RED}■ {false_count}{ENDC}")
     print(f"最大刷新时间: {result[0]['epoch_remaining_time']}")
     print(f"最小刷新时间: {result[-1]['epoch_remaining_time']}\n")
     print("按回车键退出")
