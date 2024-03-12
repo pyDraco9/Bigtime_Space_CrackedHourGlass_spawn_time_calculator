@@ -136,7 +136,7 @@ if __name__ == "__main__":
         hourglass_time_diff if hourglass_time_diff < epoch_time_diff else epoch_time_diff
         id = item["issuedId"]
         name = item["metadata"]["name"]
-        rich_id = f"{GREEN}{id:06d}{ENDC}" if next_time_diff <= timedelta(0) else f"{RED}{id:06d}{ENDC}"
+        rich_id = f"{GREEN}{id}{ENDC}" if next_time_diff <= timedelta(0) else f"{RED}{id}{ENDC}"
         table.add_row([
             rich_id,
             name,
