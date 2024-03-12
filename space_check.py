@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import traceback
 from rich.console import Console
 from rich.theme import Theme
-import os, sys
+import os, sys, time
 from dotenv import load_dotenv
 from prettytable import PrettyTable
 
@@ -76,13 +76,13 @@ def get_openloot_in_game_items(page=1, proxy=None, timeout=3):
     )
     return r.json()
 
-
-if __name__ == "__main__":
+def main():
     os.system("cls")
     page = 1
     true_count = 0
     false_count = 0
     result = []
+
     while True:
         try:
             data = get_openloot_in_game_items(page)
@@ -101,9 +101,9 @@ if __name__ == "__main__":
                         timestamp = att["value"]
                         spawn_time = 72
                         item_tags = set(item["metadata"]["tags"])
-                        for tags, time in spawn_times.items():
+                        for tags, times in spawn_times.items():
                             if set(tags).issubset(item_tags):
-                                spawn_time = time
+                                spawn_time = times
                                 break
                         time_diff = calculate_time_difference(timestamp, spawn_time)
                         item["hourglass_remaining_time"] = time_diff
@@ -112,10 +112,10 @@ if __name__ == "__main__":
                         spawn_time = 48 # 尚不清楚具体掉落时间
                         time_diff = calculate_time_difference(timestamp, spawn_time)
                         item["epoch_remaining_time"] = time_diff
-                item["next_drop_remaining_time"] = min(item["hourglass_remaining_time"], item["epoch_remaining_time"])
-                result.append(item)
                 
-
+                item["next_drop_remaining_time"] = min(item["hourglass_remaining_time"], item["epoch_remaining_time"])
+                item["next_drop_remaining_time"] -= timedelta(microseconds=item["next_drop_remaining_time"].microseconds)
+                result.append(item)
 
         except Exception as e:
             console.log(f"处理页面 {page} 时出现错误: {traceback.format_exc()}")
@@ -152,8 +152,11 @@ if __name__ == "__main__":
     
     print(table)
     print(f"{GREEN}■ {true_count}{ENDC} {RED}■ {false_count}{ENDC}")
-    print(f"最大刷新时间: {result[0]['next_drop_remaining_time']}")
-    print(f"最小刷新时间: {result[-1]['next_drop_remaining_time']}\n")
-    
-    print("按回车键退出")
-    input()
+    while result[-1]['next_drop_remaining_time'] > timedelta(0):
+        result[-1]['next_drop_remaining_time'] -= timedelta(seconds=1)
+        print(f"最小刷新时间: {result[-1]['next_drop_remaining_time']}", end="\r")
+        time.sleep(1)
+
+
+if __name__ == "__main__":
+    main()
