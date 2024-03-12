@@ -156,6 +156,9 @@ def main():
         result[-1]['next_drop_remaining_time'] -= timedelta(seconds=1)
         print(f"最小刷新时间: {result[-1]['next_drop_remaining_time']}", end="\r")
         time.sleep(1)
+    
+    print("按回车键退出")
+    input()
 
 
 if __name__ == "__main__":
