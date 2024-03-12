@@ -125,8 +125,9 @@ if __name__ == "__main__":
             break
     
     result.sort(key=lambda x: x["next_drop_remaining_time"], reverse=True)
-    table = PrettyTable()
-    table.field_names = ["编号", "名称", "倒计时", "破碎沙漏", "纪元"]
+    table = PrettyTable(field_names=["编号", "名称", "倒计时", "破碎沙漏", "纪元"])
+    table.align = "r"
+    table.padding_width = 1 
 
     for item in result:
         hourglass_time_diff = item["hourglass_remaining_time"]
