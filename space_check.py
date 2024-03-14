@@ -151,11 +151,10 @@ def main():
             false_count+=1
     
     print(table)
+    
     print(f"{GREEN}■ {true_count}{ENDC} {RED}■ {false_count}{ENDC}")
-    while result[-1]['next_drop_remaining_time'] > timedelta(0):
-        result[-1]['next_drop_remaining_time'] -= timedelta(seconds=1)
-        print(f"最小刷新时间: {result[-1]['next_drop_remaining_time']}", end="\r")
-        time.sleep(1)
+    if result[-1]['next_drop_remaining_time'] > timedelta(0):
+        print(f"最小刷新时间: {result[-1]['next_drop_remaining_time']}")
     
     print("按回车键退出")
     input()
