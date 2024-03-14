@@ -76,6 +76,13 @@ def get_openloot_in_game_items(page=1, proxy=None, timeout=3):
     )
     return r.json()
 
+def gen_google_calendar_url(delta):
+    current_time = datetime.now()
+    new_time = current_time + delta
+    formatted_time = new_time.strftime('%Y%m%dT%H%M%S')
+    formatted_url = f"https://www.google.com/calendar/event?action=TEMPLATE&dates={formatted_time}%2F{formatted_time}&text=Bigtime Space Drop"
+    return formatted_url
+
 def main():
     os.system("cls")
     page = 1
@@ -155,6 +162,7 @@ def main():
     print(f"{GREEN}■ {true_count}{ENDC} {RED}■ {false_count}{ENDC}")
     if result[-1]['next_drop_remaining_time'] > timedelta(0):
         print(f"最小刷新时间: {result[-1]['next_drop_remaining_time']}")
+        print("添加到谷歌日历: " + gen_google_calendar_url(result[-1]['next_drop_remaining_time']))
     
     print("按回车键退出")
     input()
