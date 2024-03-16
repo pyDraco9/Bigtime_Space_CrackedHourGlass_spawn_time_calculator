@@ -6,7 +6,7 @@ BIGTIME空间破碎沙漏生成时间计算器
 
 详细教程请阅读 [YiJer](https://github.com/YiJer) 的 [給一般使用者的說明](https://github.com/pyDraco9/Bigtime_Space_CrackedHourGlass_spawn_time_calculator/issues/1)
 
-使用方法: 请访问在任意有鉴权的接口(如: https://openloot.com/collection )时按F12获取 `cookie`, `X-Device-Id` 和 `X-Session-Id`.
+使用方法: 请访问在任意有鉴权的接口(如: https://openloot.com/collection )时按F12获取 `cookie`, `X-Device-Id` 和 `X-Session-Id`, 写入到.env文件中(用文本编辑器编辑).
 
 如果不会可以谷歌搜索 "chrome如何获取cookie", 其他两个参数也在同一个页面可以找到.
 
