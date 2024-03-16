@@ -14,4 +14,4 @@ BIGTIME空间破碎沙漏生成时间计算器
 
 效果图:
 
-![20240224072247](https://github.com/pyDraco9/Bigtime_Space_CrackedHourGlass_spawn_time_calculator/assets/11333467/ad54e033-ad24-46b1-8dbb-462aa02173aa)
+![20240316202931](https://github.com/pyDraco9/Bigtime_Space_CrackedHourGlass_spawn_time_calculator/assets/11333467/82ab176c-ae82-49a1-84d4-456993add5af)
