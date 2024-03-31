@@ -12,6 +12,8 @@ BIGTIME空间破碎沙漏生成时间计算器
 
 将这些值写入.env文件后(用文本编辑器编辑)运行 `space_check.py` 或 [下载编译好的exe](https://github.com/pyDraco9/Bigtime_Space_CrackedHourGlass_spawn_time_calculator/releases/)
 
+补充: 可以直接修改 `calculate_time_difference` 函数 中 `timestamp = timestamp + timedelta(hours=8)` 实现自定义时区. 当前源码中时区为UTC+8.
+
 效果图:
 
 ![20240316202931](https://github.com/pyDraco9/Bigtime_Space_CrackedHourGlass_spawn_time_calculator/assets/11333467/82ab176c-ae82-49a1-84d4-456993add5af)
