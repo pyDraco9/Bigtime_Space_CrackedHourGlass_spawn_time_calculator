@@ -55,9 +55,9 @@ spawn_times = {
 }
 
 
-def calculate_time_difference(timestamp_str, spawn_time):
+def calculate_time_difference(timestamp_str, spawn_time, timezone=8):
     timestamp = datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%S.%fZ")
-    timestamp = timestamp + timedelta(hours=8)
+    timestamp = timestamp + timedelta(hours=timezone)
     current_time = datetime.now()
     time_difference = current_time - timestamp
     remaining_time = timedelta(hours=spawn_time) - time_difference
@@ -114,13 +114,14 @@ def main():
                                 break
                         time_diff = calculate_time_difference(timestamp, spawn_time)
                         item["hourglass_remaining_time"] = time_diff
-                    elif att["name"] == "LastEpochDropTime":
-                        timestamp = att["value"]
-                        spawn_time = 48 # 尚不清楚具体掉落时间
-                        time_diff = calculate_time_difference(timestamp, spawn_time)
-                        item["epoch_remaining_time"] = time_diff
+                    # elif att["name"] == "LastEpochDropTime":
+                    #     timestamp = att["value"]
+                    #     spawn_time = 48 # 尚不清楚具体掉落时间
+                    #     time_diff = calculate_time_difference(timestamp, spawn_time)
+                    #     item["epoch_remaining_time"] = time_diff
                 
-                item["next_drop_remaining_time"] = min(item["hourglass_remaining_time"], item["epoch_remaining_time"])
+                # item["next_drop_remaining_time"] = min(item["hourglass_remaining_time"], item["epoch_remaining_time"])
+                item["next_drop_remaining_time"] = item["hourglass_remaining_time"]
                 item["next_drop_remaining_time"] -= timedelta(microseconds=item["next_drop_remaining_time"].microseconds)
                 result.append(item)
 
@@ -132,16 +133,19 @@ def main():
             break
     
     result.sort(key=lambda x: x["next_drop_remaining_time"], reverse=True)
-    table = PrettyTable(field_names=["编号", "名称", "倒计时", "破碎沙漏", "纪元"])
+    # table = PrettyTable(field_names=["编号", "名称", "倒计时", "破碎沙漏", "纪元宝箱"])
+    table = PrettyTable(field_names=["编号", "名称", "倒计时", "破碎沙漏"])
     table.align = "r"
     table.padding_width = 1 
 
     for item in result:
         hourglass_time_diff = item["hourglass_remaining_time"]
-        epoch_time_diff = item["epoch_remaining_time"]
-        next_time_diff =  min(hourglass_time_diff, epoch_time_diff) 
+        # epoch_time_diff = item["epoch_remaining_time"]
+        # next_time_diff =  min(hourglass_time_diff, epoch_time_diff) 
+        next_time_diff = hourglass_time_diff
         next_time_diff -= timedelta(microseconds=next_time_diff.microseconds)
-        hourglass_time_diff if hourglass_time_diff < epoch_time_diff else epoch_time_diff
+        # hourglass_time_diff if hourglass_time_diff < epoch_time_diff else epoch_time_diff
+        hourglass_time_diff = hourglass_time_diff
         id = item["issuedId"]
         name = item["metadata"]["name"]
         rich_id = f"{GREEN}{id}{ENDC}" if next_time_diff <= timedelta(0) else f"{RED}{id}{ENDC}"
@@ -150,7 +154,7 @@ def main():
             name,
             "" if next_time_diff <= timedelta(0) else next_time_diff,
             "" if hourglass_time_diff <= timedelta(0) else (datetime.now() + hourglass_time_diff).strftime("%m-%d %H:%M:%S"),
-            "" if epoch_time_diff <= timedelta(0) else (datetime.now() + epoch_time_diff).strftime("%m-%d %H:%M:%S"),
+            # "" if epoch_time_diff <= timedelta(0) else (datetime.now() + epoch_time_diff).strftime("%m-%d %H:%M:%S"),
             ])
         if next_time_diff <= timedelta(0):
             true_count+=1 
