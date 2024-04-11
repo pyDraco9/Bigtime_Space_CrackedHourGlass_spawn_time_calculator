@@ -168,6 +168,8 @@ def main():
             table.clear_rows()
             loop_count = 0
     
+    if (loop_count != 0):
+        print(table)
     
     print(f"{GREEN}■ {true_count}{ENDC} {RED}■ {false_count}{ENDC}")
     if result[-1]['next_drop_remaining_time'] > timedelta(0):
