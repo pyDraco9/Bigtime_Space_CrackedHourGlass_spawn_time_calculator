@@ -138,7 +138,9 @@ def main():
     table.align = "r"
     table.padding_width = 1 
 
+    loop_count = 0
     for item in result:
+        loop_count +=1
         hourglass_time_diff = item["hourglass_remaining_time"]
         # epoch_time_diff = item["epoch_remaining_time"]
         # next_time_diff =  min(hourglass_time_diff, epoch_time_diff) 
@@ -160,13 +162,17 @@ def main():
             true_count+=1 
         else:
             false_count+=1
+        # prettytable在数量过多的时候会显示不全 每50条数据拆成一个表
+        if (loop_count >= 50):
+            print(table)
+            table.clear_rows()
+            loop_count = 0
     
-    print(table)
     
     print(f"{GREEN}■ {true_count}{ENDC} {RED}■ {false_count}{ENDC}")
     if result[-1]['next_drop_remaining_time'] > timedelta(0):
         print(f"最小刷新时间: {result[-1]['next_drop_remaining_time']}")
-        print("添加到谷歌日历: " + gen_google_calendar_url(result[-1]['next_drop_remaining_time']))
+        # print("添加到谷歌日历: " + gen_google_calendar_url(result[-1]['next_drop_remaining_time']))
     
     print("按回车键退出")
     input()
